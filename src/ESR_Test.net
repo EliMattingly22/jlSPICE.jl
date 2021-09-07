@@ -1,9 +1,0 @@
-* C:\Users\elima\.julia\dev\jlSPICE\src\ESR_Test.asc
-V1 Vsrc 0 SINE(0 20 25000) AC 1
-Ldrive N001 0 10u Rser=50m
-Ldrive1 N001 Vsrc 10u Rser=1
-C1 N001 0 10u Rser=50m
-.ac dec 10000 1k 100k
-*.tran 0 10m 0 .1u
-.backanno
-.end
