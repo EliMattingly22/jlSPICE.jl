@@ -3,6 +3,11 @@ uuid = "d3a8213e-8799-4e3c-a67c-e9f77b5a9c10"
 authors = ["Eli Mattingly"]
 version = "0.1.0"
 
+[deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Gtk = "4c0ca9eb-093a-5379-98c5-f87ac0bbbf44"
+PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
+
 [compat]
 julia = "1.6"
 

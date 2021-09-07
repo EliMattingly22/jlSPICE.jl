@@ -1,0 +1,12 @@
+* C:\Users\elima\.julia\dev\jlSPICE\src\TestCirc1_2Src.asc
+V1 Vsrc 0 SINE(0 20 25000) AC 10
+Ldrive N002 0 71u Rser=200m
+L1 V0 N001 64.8u Rser=100m
+L2 N001 N002 132u Rser=100m
+C1 V0 Vsrc 2u Rser=10m
+C2 N001 0 2u Rser=10m
+C4 N002 0 1u Rser=10m
+.ac dec 10000 1k 100k
+*.tran 0 10m 0 .1u
+.backanno
+.end

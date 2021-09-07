@@ -1,0 +1,13 @@
+* C:\Users\elima\Dropbox\Julia\JLSpice\TestCirc1.asc
+V1 Vsrc 0 SINE(0 20 25000) AC 10
+Rdrive N003 0 1
+Ldrive N002 N003 100u
+L1 V0 N001 64.8u Rser=1m
+L2 N001 N002 132u Rser=1m
+C1 V0 Vsrc 2u
+C2 N001 0 2u
+C4 N002 0 1u
+.ac dec 10000 1k 999k
+*.tran 0 10m 0 .1u
+.backanno
+.end
