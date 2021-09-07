@@ -45,13 +45,22 @@ function RunACAnalysis(FileName=nothing, FreqList = 100:10:100e3, inputs = nothi
 
 end
 
+"""
+This function takes in:
+    Filename to LTSPICE netlist (View→ SPICE netlist)
+    DriveFreq, primary frequency of interest in Hz
+    Θᵣ = 1, Θc = 1 are the lumped thermal resistance of inductors and resistors ( Θᵣ) and capacitors(Θc) in ᵒC per Watt
+    TCᵣ = 0.004, TCc = 0.0003 are the temperature coefficients of the components-- TCᵣis the resistance tempco, and TCc is the capacitor tempco
+        Units for TC is in UL per deg C
 
+    InputScaling is the scaling of the input vector, for instance if you use the default input vec it will default to 1V at voltage sources, but this scalar can be used to modify that value
 
+"""
 function DetermineTempCo(FileName=nothing, DriveFreq = 25e3, ComponentName = "Ldrive";
     FreqList = 100:10:100e3,
     inputs = nothing,
-    Θᵣ = 1, Θc = 1, # ᵒC per Watt
-    TCᵣ = 0.004, TCc = 0.0003,# Ratio drift (UL) per ᵒC
+    Θᵣ = 1, Θc = 1, 
+    TCᵣ = 0.004, TCc = 0.0003,
     InputScaling = 1) 
 
 
@@ -147,6 +156,16 @@ function DetermineTempCo(FileName=nothing, DriveFreq = 25e3, ComponentName = "Ld
     return SPICE_DF,MagDriftPercent,NewCurrentDF
 end
 
+
+
+"""
+This function takes in the SPICE dataframe, results vector(Nx1), and the frequency to test it at.
+        This is needed because the Results vector is in terms of node voltages (and currents in voltage sources) but often the current in a single component is useful to know. 
+
+        This gets the voltage across two nodes and divides by the impednace of a component
+
+
+"""
 function getElementCurrents(SPICE_DF,Results,Freq)
     NumPasives = sum(SPICE_DF.Type .!= 'V')
     CurrentDF = DataFrame((Name = Any[], ΔV = Any[], Z = Any[],  Current = Any[]))
@@ -185,35 +204,11 @@ function getElementCurrents(SPICE_DF,Results,Freq)
     return CurrentDF
 end
 
-function YMatrix(ω,G,BL,Bc,SrcMat,ESR_L,ESR_C) 
-    
-    YLMat = complex(zeros(size(G)))
-    YCMat = complex(zeros(size(G)))
-    
-    for i in 1:length(G[:,1]),j in 1:length(G[:,1])
-        if BL[i,j]==0
-            YL = BL[i,j] # if there is no inductor between nodes, the assumption is it is open, so there is no admittance
-        elseif abs(ESR_L[i,j])>0
-            YL = BL[i,j] ./ (im.*ω)
-            YLMat[i,j] = 1 ./( 1 / YL + 1/ESR_L[i,j])
-        else
-            YLMat[i,j] = BL[i,j] ./ (im.*ω)
-        end
 
-        if Bc[i,j]==0
-            YC = Bc[i,j]
-        elseif abs(ESR_C[i,j])>0
-            YC =  im.*ω.* Bc[i,j]
-            YCMat[i,j] = 1 ./( 1 ./ YC + 1/ESR_C[i,j])
-        else
-            YCMat[i,j] = im.*ω.* Bc[i,j]
-        end
-        
-    end
-
-    return G  .+ YLMat .+ YCMat .+  SrcMat
-end
-    
+"""
+Plot AC Element Current
+similar to getElementCurrents, except the freq. is a vector, Results in Nx(FreqList Length), and only looks at a single component's current 
+"""
 function plotACElCurrent(SPICE_DF,FreqList,Results,ComponentName)
     ElIndex = findfirst(isequal(ComponentName),SPICE_DF.Name)
 
