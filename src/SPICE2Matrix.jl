@@ -5,8 +5,7 @@
 function SPICE2Matrix(FileName::String)
     SPICE_DF = LTSpiceLoad(FileName)
     NodeList,InputList,NumVSources = ProcessSPICE_DF(SPICE_DF)
-    G,BL,Bc,ESR_L,ESR_C,SrcMat = SPICE_DF2Matrix(SPICE_DF,NodeList,NumVSources,InputList)
-    return SPICE_DF,NodeList,InputList,NumVSources,G,BL,Bc,ESR_L,ESR_C,SrcMat
+    return SPICE_DF,NodeList,InputList,NumVSources
 end
 
 
@@ -46,68 +45,6 @@ function ProcessSPICE_DF(DF::DataFrame)
 return NodeList,InputList,NumVSources
 end
 
-function SPICE_DF2Matrix(DF,NodeList,NumVSources,InputList)
-      
-        
-
-       G = zeros(length(InputList),length(InputList))
-       BL = zeros(size(G))
-       Bc = zeros(size(G))
-       ESR_L = zeros(size(G))
-       ESR_C = zeros(size(G))
-       SrcMat = zeros(size(G))
-
-
-    for i in 1:size(DF,1)
-        N1 = DF.Node1[i]
-        N2 = DF.Node2[i]
-        if (DF.Type[i]=='R')|(DF.Type[i]=='L')|(DF.Type[i]=='C')
-            #println(i)
-
-
-            if DF.Type[i]=='R'
-                Z = DF.Value[i]
-               
-                addG!(G,Z,N1,N2)
-            elseif DF.Type[i]=='L'
-                addBL!(BL,DF.Value[i],N1,N2)
-                if DF.ESR[i]>0
-                    addG!(ESR_L,DF.ESR[i],N1,N2)
-                end
-            elseif DF.Type[i]=='C'
-                addBc!(Bc,DF.Value[i],N1,N2)
-                if DF.ESR[i]>0
-                    addG!(ESR_C,DF.ESR[i],N1,N2)
-                end
-            end
-
-
-
-        elseif DF.Type[i]=='V'
-
-            VecLoc = findfirst( x -> x=="Vin_"*DF.Name[i], InputList)
-
-            if N1<999
-                SrcMat[VecLoc,N1] = 1
-                SrcMat[N1,VecLoc] = 1
-
-            end
-            if N2<999
-
-                SrcMat[VecLoc,N2] = -1
-                SrcMat[N2,VecLoc] = -1
-            end
-
-        end
-
-    end
-
-    
-    return G,BL,Bc,ESR_L,ESR_C,SrcMat
-
-end
-
-
 function addG!(G,Value,N1,N2)
     
     Z=Value
@@ -124,44 +61,6 @@ function addG!(G,Value,N1,N2)
     
     return G
 end
-
-function addBL!(B,Value,N1,N2)
-
-        if N1<999
-            B[N1,N1] = B[N1,N1]+ 1 /Value
-        end
-        if N2<999
-            B[N2,N2] = B[N2,N2]+ 1. /Value
-        end
-        if ((N1<999)&(N2<999))
-            B[N1,N2] = B[N1,N2]- 1. /Value
-            B[N2,N1] = B[N2,N1]- 1. /Value
-        end
-    
-    
-
-    return B
-end
-
-function addBc!(Bc,Value,N1,N2)
-
-    if N1<999
-        Bc[N1,N1] = Bc[N1,N1]+ Value
-    end
-    if N2<999
-        Bc[N2,N2] = Bc[N2,N2]+ Value
-    end
-    if ((N1<999)&(N2<999))
-        Bc[N1,N2] = Bc[N1,N2]- Value
-        Bc[N2,N1] = Bc[N2,N1]- Value
-    end
-
-
-return Bc
-end
-
-
-
 
 function SPICE_DF2Matrix_ω(DF,ω,InputList)
       

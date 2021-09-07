@@ -18,7 +18,7 @@ function RunACAnalysis(FileName=nothing, FreqList = 100:10:100e3, inputs = nothi
             FileName = open_dialog("Pick a file")
     end
     
-    SPICE_DF,NodeList,InputList,NumVSources,G,BL,Bc,ESR_L,ESR_C,SrcMat = SPICE2Matrix(FileName)
+    SPICE_DF,NodeList,InputList,NumVSources = SPICE2Matrix(FileName)
     println(InputList)
     if inputs===nothing
         println("No inputs given")
@@ -29,7 +29,7 @@ function RunACAnalysis(FileName=nothing, FreqList = 100:10:100e3, inputs = nothi
     ResultNodeNames = vcat("V(".*NodeList.*")", "I(".*(InputList[end-(NumVSources-1):end]).*")")
     
     
-    Results =[ abs.(inv(SPICE_DF2Matrix_ω(SPICE_DF,2*π*FreqList[i],InputList))*inputs) for i in 1:length(FreqList)]
+    Results = [ abs.(inv(SPICE_DF2Matrix_ω(SPICE_DF,2*π*FreqList[i],InputList))*inputs) for i in 1:length(FreqList)]
     Results = hcat(Results...)
     ResDict = Dict(ResultNodeNames[1] => Results[1,:])
     for i in 2:length(ResultNodeNames)
@@ -45,6 +45,8 @@ function RunACAnalysis(FileName=nothing, FreqList = 100:10:100e3, inputs = nothi
 
 end
 
+
+
 function DetermineTempCo(FileName=nothing, DriveFreq = 25e3, ComponentName = "Ldrive";
     FreqList = 100:10:100e3,
     inputs = nothing,
@@ -58,7 +60,7 @@ function DetermineTempCo(FileName=nothing, DriveFreq = 25e3, ComponentName = "Ld
         FileName = open_dialog("Pick a file")
     end
 
-    SPICE_DF,NodeList,InputList,NumVSources,G,BL,Bc,ESR_L,ESR_C,SrcMat = SPICE2Matrix(FileName)
+    SPICE_DF,NodeList,InputList,NumVSources = SPICE2Matrix(FileName)
     println(InputList)
     if inputs===nothing
         println("No inputs given")
@@ -77,7 +79,7 @@ function DetermineTempCo(FileName=nothing, DriveFreq = 25e3, ComponentName = "Ld
         merge!(ResDict,Dict(ResultNodeNames[i] => Results[i,:]))
     
     end
-    CurVec = plotACElCurrent(SPICE_DF,FreqList,Results,ComponentName,inputs)
+    CurVec = plotACElCurrent(SPICE_DF,FreqList,Results,ComponentName)
     plot(FreqList,abs.(CurVec))
     CurrResults =[ inv(SPICE_DF2Matrix_ω(SPICE_DF,2*π*DriveFreq,InputList))*inputs]
     CurrResults = hcat(CurrResults...)
