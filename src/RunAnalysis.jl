@@ -248,3 +248,28 @@ function plotACElCurrent(SPICE_DF,FreqList,Results,ComponentName)
     
     return CurrentVec
 end
+
+
+"""
+This function modifies the spice dataframe. Specifically, it updates a value of a component
+    DF should be a SPICE Dataframe
+    ComponentName should be a string of the name (e.g. ` "LDrive" `)
+    NewVal should be a number, and the new value (e.g 0.005 for a 5mH inductor)
+
+"""
+function UpdateElementVal!(DF, ComponentName::String,NewVal)
+    ElIndex = findfirst(isequal(ComponentName),SPICE_DF.Name)
+    DF.Value[ElIndex] = NewVal
+end
+
+"""
+This function modifies the spice dataframe. Specifically, it updates a value of a component's ESR
+    DF should be a SPICE Dataframe
+    ComponentName should be a string of the name (e.g. ` "LDrive" `)
+    NewVal should be a number, and the new value (e.g 0.01 for a 10mΩ ESR)
+
+"""
+function UpdateElementESR!(DF, ComponentName::String,NewVal)
+    ElIndex = findfirst(isequal(ComponentName),SPICE_DF.Name)
+    DF.ESR[ElIndex] = NewVal
+end
