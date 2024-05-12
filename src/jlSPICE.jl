@@ -12,7 +12,7 @@ findEquivLC,
 Z_Cap,
 Z_Ind,
 RunACAnalysis,
-MakeNumericalVals
+MakeNumericalVals,
 SPICE2Matrix,
 SPICE_DF2Matrix_ω,
 LTSpiceLoad,
