@@ -5,11 +5,14 @@ include("RunAnalysis.jl")
 include("Load_LTSpice_Net.jl")
 include("SPICE2Matrix.jl")
 include("CircuitOps.jl")
+include("ToleranceAnalysisTools.jl")
+include("ImpedanceTransformations.jl")
 export findResPair,
 findEquivLC,
 Z_Cap,
 Z_Ind,
 RunACAnalysis,
+MakeNumericalVals
 SPICE2Matrix,
 SPICE_DF2Matrix_ω,
 LTSpiceLoad,
