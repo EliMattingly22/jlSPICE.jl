@@ -33,14 +33,13 @@ end
 """
 Function takes in a load impedance, Zₗ, matching impedance,Z₀, and a frequency
 
-It outputs a T network to match to that load, although only two of the three elements of the 'T' will be populated
 \n
 
-\t   ---CS-------------- *\n
-\t           |           |\n
-\t          CP           Zₗ\n
-\t           |           |\n
-\t ----------------------*\n
+\t  *---CS-------------- *\n
+\t  |        |           |\n
+\t  Z0      CP           ZLoad\n
+\t  |        |           |\n
+\t  *--------------------*\n
 
 returns CP,CS
 """
@@ -95,11 +94,11 @@ It outputs a T network to match to that load, although only two of the three ele
 
 
 """
-function lumpedElementMatch(Zₗ,Z₀)
+function lumpedElementMatch(Zₗ,Z₀; SerLoc = nothing)
 
     Xₗ = imag(Zₗ)
     Rₗ = real(Zₗ)
-    if Rₗ>real(Z₀)
+    if Rₗ>real(Z₀)||(SerLoc =="First")
         B1 = (Xₗ + sqrt(Rₗ/Z₀)*sqrt(Rₗ^2 + Xₗ^2 - Z₀*Rₗ)) /(Rₗ^2 + Xₗ^2)
         B2 = (Xₗ - sqrt(Rₗ/Z₀)*sqrt(Rₗ^2 + Xₗ^2 - Z₀*Rₗ)) /(Rₗ^2 + Xₗ^2)
         
@@ -137,9 +136,9 @@ It outputs a T network to match to that load, although only two of the three ele
 returns ShuntEl, SerEl
 
 """
-function lumpedElementMatch(Zₗ,Z₀,f;ShuntType = 'C')
+function lumpedElementMatch(Zₗ,Z₀,f;ShuntType = 'C',SerLoc = nothing)
 
-    B1,B2,X1,X2,SerElLoc = lumpedElementMatch(Zₗ,Z₀)
+    B1,B2,X1,X2,SerElLoc = lumpedElementMatch(Zₗ,Z₀;SerLoc = SerLoc)
     ω = 2*pi*f
     ShuntEl = 0.0
 

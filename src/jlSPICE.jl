@@ -7,6 +7,9 @@ include("SPICE2Matrix.jl")
 include("CircuitOps.jl")
 include("ToleranceAnalysisTools.jl")
 include("ImpedanceTransformations.jl")
+include("WireResistance_Noise.jl")
+
+
 export findResPair,
 findEquivLC,
 Z_Cap,
@@ -27,7 +30,12 @@ GaussTol,
 Par,
 lumpedElementMatch_CapCap,
 findEquivLC_Par,
-lumpedElementMatch
+lumpedElementMatch,
+resistance,
+AWG,
+Noise,
+ThermalNoise,
+RC
 
 # Write your package code here.
 

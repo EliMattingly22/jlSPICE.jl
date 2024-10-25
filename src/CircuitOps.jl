@@ -18,6 +18,19 @@ function findResPair(E, f)
 end
 
 
+"""
+finds the cutoff frequency for an RC filter\n
+
+if two inputs are given, it will be 1/(2*pi*R*C)
+
+Also, if solving for the other passive element rather than the freq, the equation is the same, so use RC(R,fc) and it will return C.
+
+"""
+function RC(R,C)
+    fc = 1/(2*pi*R*C)
+    return fc
+end 
+
 
 """
 
