@@ -18,7 +18,7 @@ function LTSpiceLoad(FileName=nothing)
          Lines =  readlines(f)
 
          close(f)
-        KCount = 0
+        KCount = 1
          SPICE_DF = DataFrame((Type = Any[], Value=Any[], Node1=Any[], Node2=Any[], Name=Any[],ESR = Any[],KCount = Any[],Attr1 = Any[],Attr2 = Any[],Attr3 = Any[],Node3 = Any[],Node4 = Any[]))
         for i in 1:length(Lines)
 
@@ -75,7 +75,7 @@ function LTSpiceLoad(FileName=nothing)
                         Name = Lines[i][1:Spaces[1]-1]
                         push!(SPICE_DF,[Lines[i][1] 1 Node1 Node2 Name 0 NaN NaN NaN NaN NaN NaN])
                 elseif (Lines[i][1]=='K')
-                        KCount+=1
+                        # KCount+=1
 
                         NumCoupledComponents = length(Spaces)-1
 
